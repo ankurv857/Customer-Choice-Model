@@ -20,8 +20,8 @@ if __name__ == '__main__':
 
     is_ordered_histories = []
     index_in_order_histories = []
-    # order_size_histories = []
-    # reorder_size_histories = []
+    order_size_histories = []
+    reorder_size_histories = []
     # order_dow_histories = []
     # order_hour_histories = []
     # days_since_prior_order_histories = []
@@ -39,19 +39,19 @@ if __name__ == '__main__':
         products = row['product_ids']
 
         products, next_products = ' '.join(products.split()[:-1]), products.split()[-1]
-        print(products, 'next_products',next_products)
+        # print(products, 'next_products',next_products)
 
-        # reorders = row['reorders']
-        # reorders, next_reorders = ' '.join(reorders.split()[:-1]), reorders.split()[-1]
+        reorders = row['reorders']
+        reorders, next_reorders = ' '.join(reorders.split()[:-1]), reorders.split()[-1]
 
         product_set = set([int(j) for i in products.split() for j in i.split('_')])
         next_product_set = set([int(i) for i in next_products.split('_')])
 
         orders = [map(int, i.split('_')) for i in products.split()]
-        # reorders = [map(int, i.split('_')) for i in reorders.split()]
-        # next_reorders = map(int, next_reorders.split('_'))
+        reorders = [map(int, i.split('_')) for i in reorders.split()]
+        next_reorders = map(int, next_reorders.split('_'))
 
-        print( 'product_set',product_set, 'next_product_set',next_product_set, 'orders', orders)
+        # print( 'product_set',product_set, 'next_product_set',next_product_set, 'orders', orders)
 
         for product_id in product_set:
 
@@ -77,20 +77,20 @@ if __name__ == '__main__':
             for order in orders:
                 is_ordered.append(str(int(product_id in order)))
                 index_in_order.append(str(order.index(product_id) + 1) if product_id in order else '0')
-                # order_size.append(str(len(order)))
-                # reorder_size.append(str(len(prior_products & set(order))))
+                order_size.append(str(len(list(order))))
+                reorder_size.append(str(len(prior_products & set(order))))
                 # prior_products |= set(order)
             
 
             is_ordered = ' '.join(is_ordered)
             index_in_order = ' '.join(index_in_order)
-            # order_size = ' '.join(order_size)
-            # reorder_size = ' '.join(reorder_size)
+            order_size = ' '.join(order_size)
+            reorder_size = ' '.join(reorder_size)
 
             is_ordered_histories.append(is_ordered)
             index_in_order_histories.append(index_in_order)
-            # order_size_histories.append(order_size)
-            # reorder_size_histories.append(reorder_size)
+            order_size_histories.append(order_size)
+            reorder_size_histories.append(reorder_size)
             # order_dow_histories.append(row['order_dows'])
             # order_hour_histories.append(row['order_hours'])
             # days_since_prior_order_histories.append(row['days_since_prior_orders'])
@@ -100,7 +100,7 @@ if __name__ == '__main__':
 
         user_ids.append(user_id)
         product_ids.append(0)
-        # labels.append(int(max(next_reorders) == 0)) if eval_set == 'train' else -1)
+        labels.append(int(max(next_reorders) == 0)) # if eval_set == 'train' else -1)
 
         aisle_ids.append(0)
         department_ids.append(0)
@@ -112,21 +112,21 @@ if __name__ == '__main__':
         order_size = []
         reorder_size = []
 
-        # for reorder in reorders:
-        #     is_ordered.append(str(int(max(reorder) == 0)))
-        #     index_in_order.append(str(0))
-        #     order_size.append(str(len(reorder)))
-        #     reorder_size.append(str(sum(reorder)))
+        for reorder in reorders:
+            is_ordered.append(str(int(max(reorder) == 0)))
+            index_in_order.append(str(0))
+            order_size.append(str(len(list(reorder))))
+            reorder_size.append(str(sum(reorder)))
 
-        # is_ordered = ' '.join(is_ordered)
-        # index_in_order = ' '.join(index_in_order)
-        # order_size = ' '.join(order_size)
-        # reorder_size = ' '.join(reorder_size)
+        is_ordered = ' '.join(is_ordered)
+        index_in_order = ' '.join(index_in_order)
+        order_size = ' '.join(order_size)
+        reorder_size = ' '.join(reorder_size)
 
-        # is_ordered_histories.append(is_ordered)
-        # index_in_order_histories.append(index_in_order)
-        # order_size_histories.append(order_size)
-        # reorder_size_histories.append(reorder_size)
+        is_ordered_histories.append(is_ordered)
+        index_in_order_histories.append(index_in_order)
+        order_size_histories.append(order_size)
+        reorder_size_histories.append(reorder_size)
         # order_dow_histories.append(row['order_dows'])
         # order_hour_histories.append(row['order_hours'])
         # days_since_prior_order_histories.append(row['days_since_prior_orders'])
@@ -140,17 +140,16 @@ if __name__ == '__main__':
         product_names,
         is_ordered_histories,
         index_in_order_histories,
-        # order_size_histories,
-        # reorder_size_histories,
+        order_size_histories,
+        reorder_size_histories,
         # order_dow_histories,
         # order_hour_histories,
         # days_since_prior_order_histories,
-        order_number_histories
-        # labels
+        order_number_histories,
+        labels
         # eval_sets
     ]
 
-    print(data) ; exit()
     columns = [
         'user_id',
         'product_id',
@@ -159,13 +158,13 @@ if __name__ == '__main__':
         'product_name',
         'is_ordered_history',
         'index_in_order_history',
-        # 'order_size_history',
-        # 'reorder_size_history',
+        'order_size_history',
+        'reorder_size_history',
         # 'order_dow_history',
         # 'order_hour_history',
         # 'days_since_prior_order_history',
-        'order_number_history'
-        # 'label'
+        'order_number_history',
+        'label'
         # 'eval_set'
     ]
     if not os.path.isdir('../../data/processed'):

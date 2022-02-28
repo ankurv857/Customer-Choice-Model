@@ -7,7 +7,7 @@ def parse_order(x):
     series = pd.Series()
 
     series['products'] = '_'.join(x['product_id'].values.astype(str).tolist())
-    # series['reorders'] = '_'.join(x['reordered'].values.astype(str).tolist())
+    series['reorders'] = '_'.join(x['reordered'].values.astype(str).tolist())
     series['aisles'] = '_'.join(x['aisle_id'].values.astype(str).tolist())
     series['departments'] = '_'.join(x['department_id'].values.astype(str).tolist())
 
@@ -33,7 +33,7 @@ def parse_user(x):
     series['product_ids'] = ' '.join(parsed_orders['products'].values.astype(str).tolist())
     series['aisle_ids'] = ' '.join(parsed_orders['aisles'].values.astype(str).tolist())
     series['department_ids'] = ' '.join(parsed_orders['departments'].values.astype(str).tolist())
-    # series['reorders'] = ' '.join(parsed_orders['reorders'].values.astype(str).tolist())
+    series['reorders'] = ' '.join(parsed_orders['reorders'].values.astype(str).tolist())
 
     # series['eval_set'] = x['eval_set'].values[-1]
 
@@ -44,6 +44,7 @@ if __name__ == '__main__':
     order_products = pd.read_csv('../../data/raw/orders_products.csv')
     products = pd.read_csv('../../data/raw/products.csv')
 
+    order_products['reordered'] = 0
     df = orders.merge(order_products, how='left', on='order_id')
     df = df.merge(products, how='left', on='product_id')
     # df['days_since_prior_order'] = df['days_since_prior_order'].fillna(0).astype(int)
